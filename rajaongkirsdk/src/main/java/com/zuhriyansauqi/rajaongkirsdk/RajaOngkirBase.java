@@ -30,5 +30,15 @@ public interface RajaOngkirBase {
     static final String JSON_SUBDISTRICT_ID = "subdistrict_id";
     static final String JSON_SUBDISTRICT_NAME = "subdistrict_name";
 
+    static final String JSON_COST_RESULT_CODE = "code";
+    static final String JSON_COST_RESULT_NAME = "name";
+    static final String JSON_COST_RESULT_COST_DETAIL = "costs";
 
+    static final String JSON_COST_DETAIL_SERVICE = "service";
+    static final String JSON_COST_DETAIL_DESCRIPTION = "description";
+    static final String JSON_COST_DETAIL_COST = "cost";
+
+    static final String JSON_COST_VALUE = "value";
+    static final String JSON_COST_ETD = "etd";
+    static final String JSON_COST_NOTE = "note";
 }

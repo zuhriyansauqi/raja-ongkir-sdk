@@ -19,8 +19,4 @@ public class ProvinceResponse extends GeneralResponse {
     public ProvinceObject getProvince() {
         return province;
     }
-
-    public void setProvince(ProvinceObject province) {
-        this.province = province;
-    }
 }

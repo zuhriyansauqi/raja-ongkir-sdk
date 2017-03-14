@@ -16,6 +16,8 @@ import org.json.JSONObject;
 public interface ROTask {
 
     final String KEY = "key";
+    final String CONTENT_TYPE = "content-type";
+    final String FORM_ENCODED = "application/x-www-form-urlencoded";
 
     void execute() throws RONullRequestException, ROInvalidRequestException;
     void generateResult(JSONObject json) throws JSONException;

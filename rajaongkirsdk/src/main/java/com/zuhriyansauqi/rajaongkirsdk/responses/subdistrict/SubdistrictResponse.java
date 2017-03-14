@@ -19,8 +19,4 @@ public class SubdistrictResponse extends GeneralResponse {
     public SubdistrictObject getSubdistrict() {
         return subdistrict;
     }
-
-    public void setSubdistrict(SubdistrictObject subdistrict) {
-        this.subdistrict = subdistrict;
-    }
 }

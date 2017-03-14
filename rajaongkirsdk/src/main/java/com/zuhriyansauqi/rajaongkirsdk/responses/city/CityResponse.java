@@ -19,8 +19,4 @@ public class CityResponse extends GeneralResponse {
     public CityObject getCity() {
         return city;
     }
-
-    public void setCity(CityObject city) {
-        this.city = city;
-    }
 }

@@ -21,8 +21,4 @@ public class CitiesResponse extends GeneralResponse {
     public List<CityObject> getCities() {
         return cities;
     }
-
-    public void setCities(List<CityObject> cities) {
-        this.cities = cities;
-    }
 }
