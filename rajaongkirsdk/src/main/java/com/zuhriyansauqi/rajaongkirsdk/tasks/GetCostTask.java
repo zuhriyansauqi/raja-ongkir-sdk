@@ -1,5 +1,6 @@
 package com.zuhriyansauqi.rajaongkirsdk.tasks;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkir;
@@ -144,17 +145,35 @@ public class GetCostTask extends ROTaskBase {
 
                     } catch (JSONException e) {
                         GetCostTask.this.responseType = ResponseTypes.PARSE_ERROR;
-                        listener.onError(GetCostTask.this);
+                        if (listener != null) {
+                            ((Activity) rajaOngkir.getContext()).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.onError(GetCostTask.this);
+                                }
+                            });
+                        }
                     }
 
                     if (listener != null) {
-                        listener.didExecuted(GetCostTask.this);
+                        ((Activity) rajaOngkir.getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.didExecuted(GetCostTask.this);
+                            }
+                        });
                     }
 
                 } catch (IOException e) {
-                    if (listener != null)
-                        GetCostTask.this.responseType = ResponseTypes.INTERNET_ERROR;
-                        listener.onError(GetCostTask.this);
+                    GetCostTask.this.responseType = ResponseTypes.INTERNET_ERROR;
+                    if (listener != null) {
+                        ((Activity) rajaOngkir.getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.didExecuted(GetCostTask.this);
+                            }
+                        });
+                    }
                 }
                 return null;
             }

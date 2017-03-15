@@ -1,6 +1,9 @@
 package com.zuhriyansauqi.rajaongkirsdk;
 
+import android.app.Activity;
 import android.content.Context;
+
+import com.zuhriyansauqi.rajaongkirsdk.tasks.ROTaskListener;
 
 /**
  * Created by zuhriyansauqi on 3/11/17.
@@ -29,6 +32,10 @@ public class RajaOngkir implements RajaOngkirBase {
 
     public String getApiKey() {
         return apiKey;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     // MARK: - Builder class

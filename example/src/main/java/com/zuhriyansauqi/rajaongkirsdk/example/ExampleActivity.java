@@ -12,6 +12,7 @@ import com.zuhriyansauqi.rajaongkirsdk.enums.PlaceTypes;
 import com.zuhriyansauqi.rajaongkirsdk.enums.ResponseTypes;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.ROInvalidRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.RONullRequestException;
+import com.zuhriyansauqi.rajaongkirsdk.objects.CityObject;
 import com.zuhriyansauqi.rajaongkirsdk.requests.CityRequest;
 import com.zuhriyansauqi.rajaongkirsdk.requests.CostRequest;
 import com.zuhriyansauqi.rajaongkirsdk.requests.ProvinceRequest;
@@ -49,7 +50,7 @@ public class ExampleActivity extends AppCompatActivity implements ROTaskListener
 
         final RajaOngkir rajaOngkir = new RajaOngkir.Init(this)
                 .withAccountType(AccountType.PRO)
-                .andApiKey("--Put your API key here--")
+                .andApiKey("-- Put your API key here --")
                 .create();
 
         try {
@@ -77,27 +78,26 @@ public class ExampleActivity extends AppCompatActivity implements ROTaskListener
 
     @Override
     public void didExecuted(ROTask task) {
-        switch (task.getResponseType()) {
-            case INTERNET_ERROR:
-                Log.d("Log", "no internet access");
-                break;
-            case PARSE_ERROR:
-                Log.d("Log", "json parse error");
-                break;
-            case INVALID_API:
-                Log.d("Log", "invalid API");
-            case SUCCESS:
-                if (task instanceof GetCityTask
-                        && task.getResponse() instanceof CitiesResponse) {
-                    final CitiesResponse response = (CitiesResponse) task.getResponse();
-                    Log.d("Log", "Total cities: " + response.getCities().size());
-                }
-                break;
+        if (task.getResponseType() == ResponseTypes.SUCCESS
+                && task instanceof GetCityTask
+                && task.getResponse() instanceof CitiesResponse) {
+            final CitiesResponse response = (CitiesResponse) task.getResponse();
+            Log.d("Log", "Total cities: " + response.getCities().size());
+            for (CityObject city : response.getCities()) {
+                Log.d("Log", city.toString());
+            }
         }
     }
 
     @Override
     public void onError(ROTask task) {
-
+        switch (task.getResponseType()) {
+            case PARSE_ERROR:
+            case INTERNET_ERROR:
+            case INVALID_API:
+            case UNKNOWN_ERROR:
+                Log.d("Log", "error");
+                break;
+        }
     }
 }

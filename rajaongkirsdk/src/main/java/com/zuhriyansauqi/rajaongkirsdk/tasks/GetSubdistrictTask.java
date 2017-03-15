@@ -1,5 +1,6 @@
 package com.zuhriyansauqi.rajaongkirsdk.tasks;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkir;
@@ -86,17 +87,35 @@ public class GetSubdistrictTask extends ROTaskBase {
 
                     } catch (JSONException e) {
                         GetSubdistrictTask.this.responseType = ResponseTypes.PARSE_ERROR;
-                        listener.didExecuted(GetSubdistrictTask.this);
+                        if (listener != null) {
+                            ((Activity) rajaOngkir.getContext()).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.onError(GetSubdistrictTask.this);
+                                }
+                            });
+                        }
                     }
 
                     if (listener != null) {
-                        listener.didExecuted(GetSubdistrictTask.this);
+                        ((Activity) rajaOngkir.getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.didExecuted(GetSubdistrictTask.this);
+                            }
+                        });
                     }
 
                 } catch (IOException e) {
-                    if (listener != null)
-                        GetSubdistrictTask.this.responseType = ResponseTypes.INTERNET_ERROR;
-                        listener.onError(GetSubdistrictTask.this);
+                    GetSubdistrictTask.this.responseType = ResponseTypes.INTERNET_ERROR;
+                    if (listener != null) {
+                        ((Activity) rajaOngkir.getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onError(GetSubdistrictTask.this);
+                            }
+                        });
+                    }
                 }
                 return null;
             }
@@ -129,7 +148,7 @@ public class GetSubdistrictTask extends ROTaskBase {
             JSONArray subdistricts = root.getJSONArray(JSON_RESULTS);
             List<SubdistrictObject> subdistrictList = new ArrayList<>();
 
-            for (int i =0; i < subdistricts.length(); i++) {
+            for (int i = 0; i < subdistricts.length(); i++) {
                 JSONObject object = subdistricts.getJSONObject(i);
 
                 subdistrictList.add(new SubdistrictObject(

@@ -29,4 +29,9 @@ public class ProvinceObject {
     public void setProvince(String province) {
         this.province = province;
     }
+
+    @Override
+    public String toString() {
+        return province;
+    }
 }
