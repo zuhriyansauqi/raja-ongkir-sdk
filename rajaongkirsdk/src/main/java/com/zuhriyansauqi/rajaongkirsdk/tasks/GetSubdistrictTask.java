@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkir;
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkirBase;
+import com.zuhriyansauqi.rajaongkirsdk.enums.ResponseTypes;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.ROInvalidRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.RONullRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.objects.CityObject;
@@ -34,18 +35,10 @@ import okhttp3.Response;
  * Created by zuhriyansauqi on 3/13/17.
  */
 
-public class GetSubdistrictTask implements ROTask, RajaOngkirBase {
-
-    private RajaOngkir rajaOngkir;
-    private RORequest request;
-    private ROResponse response;
-    private ROTaskListener listener;
-    private String url;
+public class GetSubdistrictTask extends ROTaskBase {
 
     public GetSubdistrictTask(RajaOngkir rajaOngkir, RORequest request, ROTaskListener listener) {
-        this.rajaOngkir = rajaOngkir;
-        this.request = request;
-        this.listener = listener;
+        super(rajaOngkir, request, listener);
         this.url = rajaOngkir.getBaseUrl() + "/subdistrict";
     }
 
@@ -92,16 +85,18 @@ public class GetSubdistrictTask implements ROTask, RajaOngkirBase {
                         generateResult(new JSONObject(res.body().string()));
 
                     } catch (JSONException e) {
-                        listener.didExecuted(response);
+                        GetSubdistrictTask.this.responseType = ResponseTypes.PARSE_ERROR;
+                        listener.didExecuted(GetSubdistrictTask.this);
                     }
 
                     if (listener != null) {
-                        listener.didExecuted(response);
+                        listener.didExecuted(GetSubdistrictTask.this);
                     }
 
                 } catch (IOException e) {
                     if (listener != null)
-                        listener.onError(null);
+                        GetSubdistrictTask.this.responseType = ResponseTypes.INTERNET_ERROR;
+                        listener.onError(GetSubdistrictTask.this);
                 }
                 return null;
             }
@@ -109,7 +104,7 @@ public class GetSubdistrictTask implements ROTask, RajaOngkirBase {
     }
 
     @Override
-    public void generateResult(JSONObject json) throws JSONException {
+    protected void generateResult(JSONObject json) throws JSONException {
         JSONObject root = json.getJSONObject(JSON_RAJA_ONGKIR);
         JSONObject status = root.getJSONObject(JSON_STATUS);
 
@@ -118,7 +113,15 @@ public class GetSubdistrictTask implements ROTask, RajaOngkirBase {
 
         response = new GeneralResponse(code, description);
 
-        if (code != 200) return;
+        if (code == 200) {
+            this.responseType = ResponseTypes.SUCCESS;
+        } else if (code == 400) {
+            this.responseType = ResponseTypes.INVALID_API;
+            return;
+        } else {
+            this.responseType = ResponseTypes.UNKNOWN_ERROR;
+            return;
+        }
 
         final SubdistrictRequest request = (SubdistrictRequest) this.request;
 

@@ -9,6 +9,7 @@ import com.zuhriyansauqi.rajaongkirsdk.AccountType;
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkir;
 import com.zuhriyansauqi.rajaongkirsdk.enums.Couriers;
 import com.zuhriyansauqi.rajaongkirsdk.enums.PlaceTypes;
+import com.zuhriyansauqi.rajaongkirsdk.enums.ResponseTypes;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.ROInvalidRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.RONullRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.requests.CityRequest;
@@ -20,6 +21,7 @@ import com.zuhriyansauqi.rajaongkirsdk.responses.GeneralResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.ROResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.city.CitiesResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.costresult.CostResultsResponse;
+import com.zuhriyansauqi.rajaongkirsdk.responses.province.ProvinceResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.province.ProvincesResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.subdistrict.SubdistrictsResponse;
 import com.zuhriyansauqi.rajaongkirsdk.tasks.GetCityTask;
@@ -46,8 +48,8 @@ public class ExampleActivity extends AppCompatActivity implements ROTaskListener
         super.onCreate(savedInstanceState);
 
         final RajaOngkir rajaOngkir = new RajaOngkir.Init(this)
-                .withAccountType(AccountType.STARTER)
-                .andApiKey("Put your Raja Ongkir API Key here.")
+                .withAccountType(AccountType.PRO)
+                .andApiKey("--Put your API key here--")
                 .create();
 
         try {
@@ -74,24 +76,28 @@ public class ExampleActivity extends AppCompatActivity implements ROTaskListener
     }
 
     @Override
-    public void didExecuted(ROResponse response) {
-        if (response instanceof ProvincesResponse) {
-            final ProvincesResponse res = (ProvincesResponse) response;
-            Log.d("log", "provinces" + String.valueOf(res.getProvinces().size()));
-        } else if (response instanceof CitiesResponse) {
-            final CitiesResponse res = (CitiesResponse) response;
-            Log.d("log", "cities" + String.valueOf(res.getCities().size()));
-        } else if (response instanceof SubdistrictsResponse) {
-            final SubdistrictsResponse res = (SubdistrictsResponse) response;
-            Log.d("log", "subdistricts" + String.valueOf(res.getSubdistricts().size()));
-        } else if (response instanceof CostResultsResponse) {
-            final CostResultsResponse res = (CostResultsResponse) response;
-            Log.d("log", "costs" + String.valueOf(res.getCostResults().size()));
+    public void didExecuted(ROTask task) {
+        switch (task.getResponseType()) {
+            case INTERNET_ERROR:
+                Log.d("Log", "no internet access");
+                break;
+            case PARSE_ERROR:
+                Log.d("Log", "json parse error");
+                break;
+            case INVALID_API:
+                Log.d("Log", "invalid API");
+            case SUCCESS:
+                if (task instanceof GetCityTask
+                        && task.getResponse() instanceof CitiesResponse) {
+                    final CitiesResponse response = (CitiesResponse) task.getResponse();
+                    Log.d("Log", "Total cities: " + response.getCities().size());
+                }
+                break;
         }
     }
 
     @Override
-    public void onError(ROResponse response) {
-        Log.d("log", ((GeneralResponse) response).getStatusDescription());
+    public void onError(ROTask task) {
+
     }
 }

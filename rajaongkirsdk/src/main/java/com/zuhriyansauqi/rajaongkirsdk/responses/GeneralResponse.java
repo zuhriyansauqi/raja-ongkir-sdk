@@ -6,7 +6,7 @@ package com.zuhriyansauqi.rajaongkirsdk.responses;
 
 public class GeneralResponse implements ROResponse {
 
-    private int statusCode;
+    private Integer statusCode;
     private String statusDescription;
 
     public GeneralResponse(int statusCode, String statusDescription) {
@@ -14,11 +14,11 @@ public class GeneralResponse implements ROResponse {
         this.statusDescription = statusDescription;
     }
 
-    public int getStatusCode() {
+    public Integer getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(int statusCode) {
+    public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
     }
 

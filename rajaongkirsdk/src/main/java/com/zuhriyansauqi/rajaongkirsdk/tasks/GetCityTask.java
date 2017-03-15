@@ -3,7 +3,7 @@ package com.zuhriyansauqi.rajaongkirsdk.tasks;
 import android.os.AsyncTask;
 
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkir;
-import com.zuhriyansauqi.rajaongkirsdk.RajaOngkirBase;
+import com.zuhriyansauqi.rajaongkirsdk.enums.ResponseTypes;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.ROInvalidRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.RONullRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.objects.CityObject;
@@ -11,7 +11,6 @@ import com.zuhriyansauqi.rajaongkirsdk.objects.ProvinceObject;
 import com.zuhriyansauqi.rajaongkirsdk.requests.CityRequest;
 import com.zuhriyansauqi.rajaongkirsdk.requests.RORequest;
 import com.zuhriyansauqi.rajaongkirsdk.responses.GeneralResponse;
-import com.zuhriyansauqi.rajaongkirsdk.responses.ROResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.city.CitiesResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.city.CityResponse;
 
@@ -32,18 +31,10 @@ import okhttp3.Response;
  * Created by zuhriyansauqi on 3/12/17.
  */
 
-public class GetCityTask implements ROTask, RajaOngkirBase {
-
-    private RajaOngkir rajaOngkir;
-    private RORequest request;
-    private ROResponse response;
-    private ROTaskListener listener;
-    private String url;
+public class GetCityTask extends ROTaskBase {
 
     public GetCityTask(RajaOngkir rajaOngkir, RORequest request, ROTaskListener listener) {
-        this.rajaOngkir = rajaOngkir;
-        this.request = request;
-        this.listener = listener;
+        super(rajaOngkir, request, listener);
         this.url = rajaOngkir.getBaseUrl() + "/city";
     }
 
@@ -90,16 +81,18 @@ public class GetCityTask implements ROTask, RajaOngkirBase {
                         generateResult(new JSONObject(res.body().string()));
 
                     } catch (JSONException e) {
-                        listener.didExecuted(response);
+                        GetCityTask.this.responseType = ResponseTypes.PARSE_ERROR;
+                        listener.didExecuted(GetCityTask.this);
                     }
 
                     if (listener != null) {
-                        listener.didExecuted(response);
+                        listener.didExecuted(GetCityTask.this);
                     }
 
                 } catch (IOException e) {
                     if (listener != null)
-                        listener.onError(null);
+                        GetCityTask.this.responseType = ResponseTypes.INTERNET_ERROR;
+                        listener.onError(GetCityTask.this);
                 }
                 return null;
             }
@@ -107,7 +100,7 @@ public class GetCityTask implements ROTask, RajaOngkirBase {
     }
 
     @Override
-    public void generateResult(JSONObject json) throws JSONException {
+    protected void generateResult(JSONObject json) throws JSONException {
         JSONObject root = json.getJSONObject(JSON_RAJA_ONGKIR);
         JSONObject status = root.getJSONObject(JSON_STATUS);
 
@@ -116,7 +109,15 @@ public class GetCityTask implements ROTask, RajaOngkirBase {
 
         response = new GeneralResponse(code, description);
 
-        if (code != 200) return;
+        if (code == 200) {
+            this.responseType = ResponseTypes.SUCCESS;
+        } else if (code == 400) {
+            this.responseType = ResponseTypes.INVALID_API;
+            return;
+        } else {
+            this.responseType = ResponseTypes.UNKNOWN_ERROR;
+            return;
+        }
 
         final CityRequest request = (CityRequest) this.request;
 

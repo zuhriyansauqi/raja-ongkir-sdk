@@ -2,6 +2,7 @@ package com.zuhriyansauqi.rajaongkirsdk.tasks;
 
 import android.content.Context;
 
+import com.zuhriyansauqi.rajaongkirsdk.enums.ResponseTypes;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.ROInvalidRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.RONullRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.responses.ROResponse;
@@ -19,6 +20,7 @@ public interface ROTask {
     final String CONTENT_TYPE = "content-type";
     final String FORM_ENCODED = "application/x-www-form-urlencoded";
 
+    ResponseTypes getResponseType();
+    ROResponse getResponse();
     void execute() throws RONullRequestException, ROInvalidRequestException;
-    void generateResult(JSONObject json) throws JSONException;
 }

@@ -8,6 +8,6 @@ import com.zuhriyansauqi.rajaongkirsdk.responses.ROResponse;
 
 public interface ROTaskListener {
 
-    void didExecuted(ROResponse response);
-    void onError(ROResponse response);
+    void didExecuted(final ROTask task);
+    void onError(final ROTask task);
 }

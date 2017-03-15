@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkir;
 import com.zuhriyansauqi.rajaongkirsdk.RajaOngkirBase;
+import com.zuhriyansauqi.rajaongkirsdk.enums.ResponseTypes;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.ROInvalidRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.exceptions.RONullRequestException;
 import com.zuhriyansauqi.rajaongkirsdk.objects.ProvinceObject;
@@ -31,18 +32,10 @@ import okhttp3.Response;
  * Created by zuhriyansauqi on 3/11/17.
  */
 
-public class GetProvinceTask implements ROTask, RajaOngkirBase {
-
-    private RajaOngkir rajaOngkir;
-    private RORequest request;
-    private ROResponse response;
-    private ROTaskListener listener;
-    private String url;
+public class GetProvinceTask extends ROTaskBase {
 
     public GetProvinceTask(RajaOngkir rajaOngkir, RORequest request, ROTaskListener listener) {
-        this.rajaOngkir = rajaOngkir;
-        this.request = request;
-        this.listener = listener;
+        super(rajaOngkir, request, listener);
         this.url = rajaOngkir.getBaseUrl() + "/province";
     }
 
@@ -81,16 +74,18 @@ public class GetProvinceTask implements ROTask, RajaOngkirBase {
                         generateResult(new JSONObject(res.body().string()));
 
                     } catch (JSONException e) {
-                        listener.didExecuted(response);
+                        GetProvinceTask.this.responseType = ResponseTypes.PARSE_ERROR;
+                        listener.didExecuted(GetProvinceTask.this);
                     }
 
                     if (listener != null) {
-                        listener.didExecuted(response);
+                        listener.didExecuted(GetProvinceTask.this);
                     }
 
                 } catch (IOException e) {
                     if (listener != null)
-                        listener.onError(null);
+                        GetProvinceTask.this.responseType = ResponseTypes.INTERNET_ERROR;
+                        listener.onError(GetProvinceTask.this);
                 }
                 return null;
             }
@@ -98,7 +93,7 @@ public class GetProvinceTask implements ROTask, RajaOngkirBase {
     }
 
     @Override
-    public void generateResult(JSONObject json) throws JSONException {
+    protected void generateResult(JSONObject json) throws JSONException {
         JSONObject root = json.getJSONObject(JSON_RAJA_ONGKIR);
         JSONObject status = root.getJSONObject(JSON_STATUS);
 
@@ -107,7 +102,15 @@ public class GetProvinceTask implements ROTask, RajaOngkirBase {
 
         response = new GeneralResponse(code, description);
 
-        if (code != 200) return;
+        if (code == 200) {
+            this.responseType = ResponseTypes.SUCCESS;
+        } else if (code == 400) {
+            this.responseType = ResponseTypes.INVALID_API;
+            return;
+        } else {
+            this.responseType = ResponseTypes.UNKNOWN_ERROR;
+            return;
+        }
 
         final ProvinceRequest request = (ProvinceRequest) this.request;
 
