@@ -32,6 +32,6 @@ public class ProvinceObject {
 
     @Override
     public String toString() {
-        return province;
+        return "Provinsi " + province;
     }
 }

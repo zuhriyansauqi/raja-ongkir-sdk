@@ -69,6 +69,6 @@ public class CityObject {
 
     @Override
     public String toString() {
-        return name;
+        return type + " " + name;
     }
 }
