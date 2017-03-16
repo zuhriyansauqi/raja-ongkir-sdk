@@ -42,6 +42,6 @@ public class SubdistrictObject {
 
     @Override
     public String toString() {
-        return "Kecamatan: " + name;
+        return "Kecamatan " + name;
     }
 }
