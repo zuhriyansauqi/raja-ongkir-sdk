@@ -35,4 +35,31 @@ public enum Couriers {
     public String toString() {
         return this.value;
     }
+
+    public boolean canCheckWaybill() {
+        switch (this) {
+            case JALUR_NUGRAHA_EKAKURIR:
+            case POS_INDONESIA:
+            case CITRA_VAN_TITIPAN_KILAT:
+            case RPX_HOLDING:
+            case EKA_SARI_LORENA:
+            case PRIORITY_CARGO_AND_PACKAGE:
+            case SICEPAT_EXPRESS:
+            case J_AND_T_EXPRESS:
+            case SAP_EXPRESS:
+            case JET_EXPRESS:
+            case TWENTY_ONE_EXPRESS:
+            case FIRST_LOGISTICS:
+                return true;
+            case PANDU_LOGISTICS:
+            case WAHANA_PRESTASI_LOGISTIK:
+            case PAHALA_KENCANA_EXPRESS:
+            case CAHAYA_LOGISTIK:
+            case INDAH_LOGISTIC:
+            case SOLUSI_EXPRESS:
+                return false;
+            default:
+                return false;
+        }
+    }
 }
