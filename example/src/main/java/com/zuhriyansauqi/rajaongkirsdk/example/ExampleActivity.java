@@ -18,6 +18,7 @@ import com.zuhriyansauqi.rajaongkirsdk.requests.CostRequest;
 import com.zuhriyansauqi.rajaongkirsdk.requests.ProvinceRequest;
 import com.zuhriyansauqi.rajaongkirsdk.requests.RORequest;
 import com.zuhriyansauqi.rajaongkirsdk.requests.SubdistrictRequest;
+import com.zuhriyansauqi.rajaongkirsdk.requests.WaybillRequest;
 import com.zuhriyansauqi.rajaongkirsdk.responses.GeneralResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.ROResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.city.CitiesResponse;
@@ -25,10 +26,12 @@ import com.zuhriyansauqi.rajaongkirsdk.responses.costresult.CostResultsResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.province.ProvinceResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.province.ProvincesResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.subdistrict.SubdistrictsResponse;
+import com.zuhriyansauqi.rajaongkirsdk.responses.waybill.WaybillResponse;
 import com.zuhriyansauqi.rajaongkirsdk.tasks.GetCityTask;
 import com.zuhriyansauqi.rajaongkirsdk.tasks.GetCostTask;
 import com.zuhriyansauqi.rajaongkirsdk.tasks.GetProvinceTask;
 import com.zuhriyansauqi.rajaongkirsdk.tasks.GetSubdistrictTask;
+import com.zuhriyansauqi.rajaongkirsdk.tasks.GetWaybillTask;
 import com.zuhriyansauqi.rajaongkirsdk.tasks.ROTask;
 import com.zuhriyansauqi.rajaongkirsdk.tasks.ROTaskListener;
 
@@ -66,6 +69,10 @@ public class ExampleActivity extends AppCompatActivity implements ROTaskListener
             task = new GetSubdistrictTask(rajaOngkir, request, this);
             task.execute();
 
+            request = new WaybillRequest("SOCAG00183235715", Couriers.JALUR_NUGRAHA_EKAKURIR);
+            task = new GetWaybillTask(rajaOngkir, request, this);
+            task.execute();
+
             request = new CostRequest("501", PlaceTypes.CITY, "574", PlaceTypes.SUBDISTRICT, 1700,
                     new ArrayList<>(Arrays.asList(Couriers.JALUR_NUGRAHA_EKAKURIR, Couriers.POS_INDONESIA)),
                     null, null, null, null);
@@ -86,6 +93,11 @@ public class ExampleActivity extends AppCompatActivity implements ROTaskListener
             for (CityObject city : response.getCities()) {
                 Log.d("Log", city.toString());
             }
+        } else if (task.getResponseType() == ResponseTypes.SUCCESS
+                && task instanceof GetWaybillTask
+                && task.getResponse() instanceof WaybillResponse) {
+            final WaybillResponse response = (WaybillResponse) task.getResponse();
+            Log.d("Log", "Delived: " + response.getDelivered());
         }
     }
 
@@ -97,6 +109,7 @@ public class ExampleActivity extends AppCompatActivity implements ROTaskListener
             case INVALID_API:
             case UNKNOWN_ERROR:
                 Log.d("Log", "error");
+                Log.d("Log", "error" + task.getResponseType());
                 break;
         }
     }
