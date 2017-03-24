@@ -14,7 +14,6 @@ import com.zuhriyansauqi.rajaongkirsdk.requests.CostRequest;
 import com.zuhriyansauqi.rajaongkirsdk.requests.RORequest;
 import com.zuhriyansauqi.rajaongkirsdk.responses.GeneralResponse;
 import com.zuhriyansauqi.rajaongkirsdk.responses.costresult.CostResultResponse;
-import com.zuhriyansauqi.rajaongkirsdk.responses.costresult.CostResultsResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -202,21 +201,15 @@ public class GetCostTask extends ROTaskBase {
 
         final CostRequest request = (CostRequest) this.request;
 
-        if (request.getCouriers().size() > 1) {
-            JSONArray costResults = root.getJSONArray(JSON_RESULTS);
-            List<CostResultObject> costResultList = new ArrayList<>();
+        JSONArray costResults = root.getJSONArray(JSON_RESULTS);
+        List<CostResultObject> costResultList = new ArrayList<>();
 
-            for (int i = 0; i < costResults.length(); i++) {
-                JSONObject object = costResults.getJSONObject(i);
+        for (int i = 0; i < costResults.length(); i++) {
+            JSONObject object = costResults.getJSONObject(i);
 
-                costResultList.add(getSingleCostResult(object));
-            }
-
-            response = new CostResultsResponse(code, description, costResultList);
-        } else {
-            JSONObject costResult = root.getJSONObject(JSON_RESULTS);
-
-            response = new CostResultResponse(code, description, getSingleCostResult(costResult));
+            costResultList.add(getSingleCostResult(object));
         }
+
+        response = new CostResultResponse(code, description, costResultList);
     }
 }
